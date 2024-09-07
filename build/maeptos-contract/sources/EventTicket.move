@@ -74,23 +74,27 @@ module ticket::EventTicket {
     }
 
 
-    // public fun allow_transfer(account: &signer, ticket_id: u64) acquires TicketStore {
-    //     let ticket_store = borrow_global_mut<TicketStore>(signer::address_of(account));
-    //     let ticket = vector::borrow_mut(&mut ticket_store.tickets, ticket_id);
-    //     assert!(ticket.owner == signer::address_of(account), 101);
-    //     ticket.can_transfer = true;
-    // }
+    public entry fun allow_transfer(account: &signer, ticket_id: u64) acquires TicketStore {
+        let ticket_store = borrow_global_mut<TicketStore>(signer::address_of(account));
+        let ticket = vector::borrow_mut(&mut ticket_store.tickets, ticket_id);
+        assert!(ticket.owner == signer::address_of(account), 101);
+        ticket.can_transfer = true;
+    }
 
-    // public fun transfer_ticket(account: &signer, recipient: address, ticket_id: u64) acquires TicketStore {
-    //     let ticket_store = borrow_global_mut<TicketStore>(signer::address_of(account));
-    //     let ticket = vector::borrow_mut(&mut ticket_store.tickets, ticket_id);
-    //     assert!(ticket.owner == signer::address_of(account), 101);
-    //     assert!(ticket.can_transfer, 102);
-    //     assert!(!ticket.is_used, 103);
+    public entry fun transfer_ticket(account: &signer, recipient: address, ticket_id: u64) acquires TicketStore {
+        let ticket_store = borrow_global_mut<TicketStore>(signer::address_of(account));
+        let ticket = vector::remove(&mut ticket_store.tickets, ticket_id);
+        
+        assert!(ticket.owner == signer::address_of(account), 101);
+        assert!(ticket.can_transfer, 102);
+        assert!(!ticket.is_used, 103);
 
-    //     ticket.owner = recipient;
-    //     ticket.can_transfer = false;
-    // }
+        ticket.owner = recipient;
+        ticket.can_transfer = false;
+
+        let recipient_ticket_store = borrow_global_mut<TicketStore>(recipient);
+        vector::push_back(&mut recipient_ticket_store.tickets, ticket);
+    }
 
     // public fun use_ticket(account: &signer, ticket_id: u64) acquires TicketStore {
     //     let ticket_store = borrow_global_mut<TicketStore>(signer::address_of(account));
@@ -99,21 +103,5 @@ module ticket::EventTicket {
     //     assert!(!ticket.is_used, 103);
 
     //     ticket.is_used = true;
-    // }
-
-    // public fun get_event_tickets(account: address, event_id: u64): vector<Ticket> acquires TicketStore {
-    //     let ticket_store = borrow_global<TicketStore>(account);
-    //     let mut event_tickets = vector::empty<Ticket>();
-    //     let tickets = &ticket_store.tickets;
-    //     let len = vector::length(tickets);
-
-    //     for (i in 0..len) {
-    //         let ticket = vector::borrow(tickets, i);
-    //         if (ticket.event_id == event_id) {
-    //             vector::push_back(&mut event_tickets, ticket);
-    //         }
-    //     };
-
-    //     event_tickets
     // }
 }
