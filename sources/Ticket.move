@@ -100,20 +100,4 @@ module ticket::EventTicket {
 
     //     ticket.is_used = true;
     // }
-
-    // public fun get_event_tickets(account: address, event_id: u64): vector<Ticket> acquires TicketStore {
-    //     let ticket_store = borrow_global<TicketStore>(account);
-    //     let mut event_tickets = vector::empty<Ticket>();
-    //     let tickets = &ticket_store.tickets;
-    //     let len = vector::length(tickets);
-
-    //     for (i in 0..len) {
-    //         let ticket = vector::borrow(tickets, i);
-    //         if (ticket.event_id == event_id) {
-    //             vector::push_back(&mut event_tickets, ticket);
-    //         }
-    //     };
-
-    //     event_tickets
-    // }
 }
